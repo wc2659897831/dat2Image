@@ -13,7 +13,7 @@ const SOIMap = {
 }
 
 const isDeep = true // 是否递归
-const startMode = ENCODE // ENCODE | DECODE
+const startMode = DECODE // ENCODE | DECODE
 const eruptSimultaneouslyCount = 50 // 并行操作数量限制
 // 读取文件目录
 let readDir = 'D:/Desktop/test';
