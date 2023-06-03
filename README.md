@@ -24,7 +24,7 @@ npm install
 node index.js
 ```
 
-`index.js`中设置下图的两个变量, 就可以控制 读取的目录 和 输出的目录
+`index.js`中设置下图的两个变量, 就可以控制`读取的目录`和`输出的目录`
 
 ![image](https://github.com/wc2659897831/dat2Image/assets/60737437/4502102a-951b-4b73-9e64-f4264f858bdf)
 
