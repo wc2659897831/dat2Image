@@ -1,6 +1,9 @@
 # dat2Image
+
 用于将微信加密的dat文件格式转换成正常的图片文件格式(jpg/gif/png)
+
 ## 原理
+
 微信加密的文件, 文件大小没有变化, 说明只是一种编码的变换
 微信使用的是`异或加密`
 我们只要得到原本文件的文件头和加密后的文件头, 然后进行异或, 就可以得到密钥
@@ -14,6 +17,7 @@
 如果要加密数据, 就是把密钥去遍历全部数据
 
 ## 微信目录说明
+
 在2022年6月之前的文件都是单独的按照日期保存
 
 2022年6月之后(包含)的文件就被存放在`MsgAttach`目录下, 然后有一层哈希名的目录, 等于把图片都根据哈希去存放
@@ -21,24 +25,49 @@
 `Thumb`文件夹存放的是图片缩略图
 
 ## 支持的功能
-- 递归的处理文件
-- 过滤缩略图
-- 支持JPG/GIF/PNG的转换
-- 反向编码成`.dat`文件
+
+*   递归的处理文件
+*   不同层级显示/同层级显示
+*   过滤缩略图
+*   支持JPG/GIF/PNG的转换
+*   反向编码成`.dat`文件
+
+## 变量说明
+
+| 变量名                      | 默认值 | 可选值   | 作用          |
+| ------------------------ | ------ |-| ----------- |
+| isDeep                   | true   |true/false |是否递归        |
+| isFlat                   | false  |true/false |是否都处理到同一层级中 |
+| startMode                | DECODE | DECODE/ENCODE|处理方式, 默认是解码 |
+| eruptSimultaneouslyCount |  50000    |1-???| 操作数量限制, 如果操作的总数量超过50000, 建议再进行手动修改          |
+| fileUint | KB |KB/MB/GB| 每个文件处理后显示的文件大小单位
+| sumFileUint | MB |KB/MB/GB| 总文件大小显示的单位
+| excludeDirs | ["Thumb", "humb"] | |排除的目录, 默认排除处理缩略图目录(Thumb)
 
 ## 使用
+
 ```shell
 npm install
 ```
+
 修改`index.js`文件中的`readDir`和`saveDir`
+
 ```shell
 node index.js
 ```
 
-`index.js`中设置下图的两个变量, 就可以控制`读取的目录`和`输出的目录`
+## 案例
+### 将dat文件解码成正常图片
+使用默认配置即可
 
-![image](https://github.com/wc2659897831/dat2Image/assets/60737437/4502102a-951b-4b73-9e64-f4264f858bdf)
+![image](https://github.com/wc2659897831/dat2Image/assets/60737437/83fd5b82-fbd7-47f0-90d6-752210aed3c7)
 
-设置`startMode`, `ENCODE`就是解密`dat`文件, `ENCODE`是加密成`dat`文件
+![image](https://github.com/wc2659897831/dat2Image/assets/60737437/10880003-a733-4605-8986-5348fe5779e1)
 
-![image](https://github.com/wc2659897831/dat2Image/assets/60737437/979e6e00-3f32-409e-beb3-c9340f12e8ff)
+执行`index.js`文件, 就可以看到上面的输出
+### 将JPG/GIF/PNG编码成dat文件
+将`startMode`修改成`ENCODE`
+
+![image](https://github.com/wc2659897831/dat2Image/assets/60737437/73b6072d-2b7f-462d-a2c5-26949005f8a9)
+
+执行`index.js`文件, 就可以看到上面的输出
