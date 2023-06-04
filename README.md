@@ -29,6 +29,9 @@
 ## 使用
 ```shell
 npm install
+```
+修改`index.js`文件中的`readDir`和`saveDir`
+```shell
 node index.js
 ```
 

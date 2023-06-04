@@ -14,8 +14,10 @@ const SOIMap = {
 
 const isDeep = true // 是否递归
 const isFlat = false // 是否导出的文件都在同一层
-const startMode = DECODE // ENCODE | DECODE
+const startMode = DECODE // 处理方式 ENCODE | DECODE
 const eruptSimultaneouslyCount = 50000 // 并行操作数量限制
+const fileUnit = "KB" // 文件大小显示单位 KB | MB | GB
+const sumFileUnit = "MB" // 总文件大小显示单位 KB | MB | GB
 const excludeDirs = ['Thumb', 'thumb'] // 排除的目录
 
 // 读取文件目录
@@ -30,10 +32,11 @@ const time = {
   readFile: null, // 读取文件时间
   writeFile: null // 写入文件时间
 }
-let sumFileSize = 0 // 单位Byte
+let sumFileSize = 0 // 总文件大小 单位Byte
 let sumResolveFileCount = 0 // 总共要处理的文件数量
 let resolveFileCount = 0 // 处理文件数量统计
 let errorFile = [] // 错误文件统计
+let errorTipsCount = 0 // 错误信息提示数量
 
 // bufferSize默认传入的单位是Byte
 function bufferSizeShow(bufferSize, unit = 'MB') {
@@ -41,6 +44,13 @@ function bufferSizeShow(bufferSize, unit = 'MB') {
     KB: 1024,
     MB: 1024 * 1024,
     GB: 1024 * 1024 * 1024
+  }
+  if (!Object.keys(unitMap).includes(unit.toUpperCase())) {
+    if (errorTipsCount < 1) {
+      console.error("ERROR: 由于传入的是错误的文件类型, 默认设置文件单位为KB")
+      errorTipsCount = 1
+    }
+    unit = "KB"
   }
   const val = (bufferSize / unitMap[unit.toUpperCase()]).toFixed(2)
   return `${val} ${unit}`
@@ -104,7 +114,7 @@ function batchResolveCb(res, err) {
   console.log("读取文件所需时间:", time.readFile, 'ms')
   console.log("写入文件所需时间:", time.writeFile, 'ms')
   console.log("总文件数量:", resolveFileCount)
-  console.log("总文件大小:", bufferSizeShow(sumFileSize, "MB"))
+  console.log("总文件大小:", bufferSizeShow(sumFileSize, sumFileUnit))
 
   if (errorFile.length) {
     console.log("错误文件数量:", errorFile.length)
@@ -204,7 +214,7 @@ function decode(item, cb) {
   const val = resolveFileCount / sumResolveFileCount * 100
   sumFileSize += bufferContent.length
   const outputText =
-    `${getDate(null, 'time')} 解码 ${resolveFileCount}/${sumResolveFileCount} ${val.toFixed(4)}% 文件大小: ${bufferSizeShow(bufferContent.length, "KB")}`
+    `${getDate(null, 'time')} 解码 ${resolveFileCount}/${sumResolveFileCount} ${val.toFixed(4)}% 文件大小: ${bufferSizeShow(bufferContent.length, fileUnit)}`
   console.log(outputText)
 
   // 输出计算完毕的结果输出
@@ -227,7 +237,7 @@ function encode(item, cb) {
   // 计算进度
   const val = resolveFileCount / sumResolveFileCount * 100
   sumFileSize += bufferContent.length
-  console.log(`${getDate(null, 'time')} 编码 ${resolveFileCount}/${sumResolveFileCount} ${val.toFixed(4)}% 文件大小: ${bufferSizeShow(bufferContent.length, "KB")}`)
+  console.log(`${getDate(null, 'time')} 编码 ${resolveFileCount}/${sumResolveFileCount} ${val.toFixed(4)}% 文件大小: ${bufferSizeShow(bufferContent.length, fileUnit)}`)
 
   // 输出计算完毕的结果输出
   if (resolveFileCount == sumResolveFileCount) {
